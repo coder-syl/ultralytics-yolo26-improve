@@ -33,20 +33,23 @@ backbone:
 
 # YOLO26n head
 head:
-  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
-  - [[-1, 6], 1, Concat, [1]] # cat backbone P4
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 11
+  - [[-1, 6], 1, Concat, [1]] # 12 cat backbone P4
   - [-1, 2, C3k2, [512, True]] # 13
 
-  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
-  - [[-1, 4], 1, Concat, [1]] # cat backbone P3
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 14
+  - [[-1, 4], 1, Concat, [1]] # 15 cat backbone P3
   - [-1, 2, C3k2, [256, True]] # 16 (P3/8-small)
-  - [-1, 1, StokenAttention, []]  #17
-  - [-1, 1, Conv, [256, 3, 2]]
-  - [[-1, 13], 1, Concat, [1]] # cat head P4
-  - [-1, 2, C3k2, [512, True]] # 19 (P4/16-medium)
-  - [-1, 1, StokenAttention, []]  #17
-  - [-1, 1, Conv, [512, 3, 2]]
-  - [[-1, 10], 1, Concat, [1]] # cat head P5
-  - [-1, 1, C3k2, [1024, True, 0.5, True]] # 22 (P5/32-large)
-  - [-1, 1, StokenAttention, []]  #17
-  - [[17, 21, 25], 1, Detect, [nc]] # Detect(P3, P4, P5)
+  - [-1, 1, MultiDilatelocalAttention, []] # 17 (P3 Attention)
+
+  - [-1, 1, Conv, [256, 3, 2]] # 18 (was 17)
+  - [[-1, 13], 1, Concat, [1]] # 19 (was 18) cat head P4
+  - [-1, 2, C3k2, [512, True]] # 20 (was 19) (P4/16-medium)
+  - [-1, 1, MultiDilatelocalAttention, []] # 21 (P4 Attention)
+
+  - [-1, 1, Conv, [512, 3, 2]] # 22 (was 20)
+  - [[-1, 10], 1, Concat, [1]] # 23 (was 21) cat head P5
+  - [-1, 1, C3k2, [1024, True, 0.5, True]] # 24 (was 22) (P5/32-large)
+  - [-1, 1, MultiDilatelocalAttention, []] # 25 (P5 Attention)
+
+  - [[17, 21, 25], 1, Detect, [nc]] # 26 (Detect(P3, P4, P5))
